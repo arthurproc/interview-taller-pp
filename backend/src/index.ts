@@ -61,14 +61,7 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-
-type Transaction = {
-  id: string;
-  amount: number;
-  description: string;
-};
-
-const users = new Map<string, Transaction>();
+import { TransactionController } from "./controllers/transaction.controller";
 
 const app = express();
 
@@ -82,15 +75,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post("/transaction", (req, res) => {
-  const { amount, description } = req.body;
-
-  const id = `${Date.now()}`;
-
-  users.set(id, { id, amount, description });
-
-  return res.json({ id, amount, description });
-});
+app.post("/transactions", TransactionController.createTransaction);
+app.get("/transactions/:id", TransactionController.getTransaction);
+app.get("/transactions", TransactionController.getAllTransactions);
 
 app.listen(3000, () => {
   console.log("Listening on PORT: 3000");
